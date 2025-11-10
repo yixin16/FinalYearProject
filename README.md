@@ -9,12 +9,11 @@ The system provides automated and secure attendance marking using a **Flask-base
 ---
 
 ## 🚀 Key Features
-- **Real-Time Face Detection & Recognition** using MTCNN and a custom CNN classifier.  
-- **Integrated Liveness Detection** (blink, smile, and head pose estimation via SolvePnP).  
-- **Automatic Attendance Recording** through SQLite database integration.  
-- **Model Retraining** triggered after new face registrations to continuously improve accuracy.  
-- **End-to-End System Pipeline** — face registration → embedding extraction → recognition → attendance marking.  
-- **Flask Web App Interface** for student and lecturer authentication, attendance viewing, and management.
+- **Real-Time Face Detection & Recognition:** Uses dlib HOG/CNN detectors and deep feature embeddings for accurate recognition.  
+- **68-Point Facial Landmark Liveness Detection:** Detects eye blinks, mouth movement, and head pose using dlib landmarks.  
+- **End-to-End Pipeline:** From video capture → preprocessing → face detection → recognition → liveness check → attendance logging.  
+- **Flask Web Interface:** Displays live video feed, recognized staff, and attendance logging.  
+- **Low-Latency Deployment:** Optimized for real-time performance on CPU/GPU.
 
 ---
 
@@ -32,11 +31,12 @@ The system provides automated and secure attendance marking using a **Flask-base
 ---
 
 ## 🏗️ System Architecture
-1. **Face Detection** → MTCNN detects face bounding boxes in real-time video feed.  
-2. **Liveness Detection** → EAR, MAR, and head movement analyzed to confirm live human presence.  
-3. **Feature Extraction** → CNN model converts detected faces into 1024D embeddings.  
-4. **Face Recognition** → Cosine similarity used for identity verification.  
-5. **Attendance Logging** → Flask app updates attendance records in SQLite database.  
+1. **Face Detection** (Dlib HOG/CNN)
+2. Facial Landmark Detection (68-point detector) 
+3. **Liveness Detection** → EAR, MAR, and head movement analyzed to confirm live human presence.  
+4. **Feature Extraction** → CNN model converts detected faces into 1024D embeddings.  
+5. **Face Recognition** → Cosine similarity used for identity verification.  
+6. **Attendance Logging** → Flask app updates attendance records in SQLite database.  
 
 ---
 
