@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Export Reports - Attendance System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #2e59d9;
+            --success-color: #1cc88a;
+            --light-color: #f8f9fc;
+            --dark-color: #5a5c69;
+        }
+        
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fc;
+            color: var(--dark-color);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        }
+        
+        h1 {
+            color: var(--dark-color);
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+        
+        .back-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn:hover {
+            background-color: var(--secondary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .export-card {
+            border-left: 4px solid var(--success-color);
+            margin-bottom: 20px;
+        }
+        
+        .export-option {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .export-icon {
+            font-size: 1.5rem;
+            color: var(--success-color);
+        }
+        
+        .section-select {
+            max-width: 400px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .export-option {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .section-select {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{{ url_for('lecturer_dashboard') }}" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+        
+        <h1><i class="bi bi-file-earmark-arrow-down"></i> Export Reports</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-4">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="card export-card">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">Export Attendance Data</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('export_reports') }}">
+                    <div class="mb-4">
+                        <label class="form-label">Select Course and Section:</label>
+                        <select name="section_id" class="form-select section-select" required>
+                            <option value="">-- Select a section --</option>
+                            {% for course in courses %}
+                                <optgroup label="{{ course.course_code }} - {{ course.course_name }}">
+                                    {% for section in course.sections %}
+                                        <option value="{{ section.section_id }}">
+                                            {{ section.section_name }}
+                                        </option>
+                                    {% endfor %}
+                                </optgroup>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label">Export Format:</label>
+                        <div class="export-options">
+                            <div class="export-option">
+                                <i class="bi bi-filetype-csv export-icon"></i>
+                                <div>
+                                    <h5>CSV Format</h5>
+                                    <p>Compatible with Excel and other spreadsheet software</p>
+                                </div>
+                                <button type="submit" name="format" value="csv" class="btn btn-success ms-auto">
+                                    <i class="bi bi-download"></i> Export CSV
+                                </button>
+                            </div>
+                            
+                            <div class="export-option">
+                                <i class="bi bi-filetype-pdf export-icon"></i>
+                                <div>
+                                    <h5>PDF Format</h5>
+                                    <p>Printable report with formatted layout</p>
+                                </div>
+                                <button type="submit" name="format" value="pdf" class="btn btn-danger ms-auto">
+                                    <i class="bi bi-download"></i> Export PDF
+                                </button>
+                            </div>
+                            
+                            <div class="export-option">
+                                <i class="bi bi-filetype-xlsx export-icon"></i>
+                                <div>
+                                    <h5>Excel Format</h5>
+                                    <p>Native Excel format with multiple sheets</p>
+                                </div>
+                                <button type="submit" name="format" value="excel" class="btn btn-primary ms-auto">
+                                    <i class="bi bi-download"></i> Export Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

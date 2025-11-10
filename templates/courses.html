@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Courses - Attendance System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #6d28d9;
+            --primary-light: #ede9fe;
+            --success: #0d9488;
+            --success-dark: #0f766e;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --dark: #1f2937;
+            --gray: #6b7280;
+            --light-gray: #f3f4f6;
+            --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0fdfa 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin-top: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 1.5rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+        }
+
+        .page-header h1 {
+            color: var(--dark);
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(124, 58, 237, 0.3);
+            color: white;
+        }
+
+        .course-form {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .course-form:hover {
+            transform: translateY(-5px);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            padding: 0.875rem 1rem;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            padding: 0.875rem 1.75rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(124, 58, 237, 0.3);
+        }
+
+        .table-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+        }
+
+        /* Flash messages */
+        .flashes {
+            list-style-type: none;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .flashes li {
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            font-weight: 500;
+        }
+
+        .flashes .success {
+            background: linear-gradient(to right, var(--success-light), white);
+            color: #065f46;
+            border-left: 4px solid var(--success);
+        }
+
+        .flashes .error {
+            background: linear-gradient(to right, var(--danger-light), white);
+            color: #991b1b;
+            border-left: 4px solid var(--danger);
+        }
+
+        /* Course cards */
+        .course-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f3f4;
+            transition: all 0.3s ease;
+        }
+
+        .course-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            transform: translateY(-3px);
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .course-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .course-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        /* FIXED: Action buttons with no text decoration */
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.3s ease;
+            text-decoration: none !important;
+            cursor: pointer;
+            border: 1px solid;
+            background-color: transparent;
+        }
+
+        /* Specifically target button elements within action-btn */
+        .action-btn button {
+            text-decoration: none !important;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font: inherit;
+            padding: 0;
+        }
+
+        .btn-outline-primary {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: transparent;
+            text-decoration: none !important;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            text-decoration: none !important;
+        }
+
+        .btn-outline-secondary {
+            border-color: var(--gray);
+            color: var(--gray);
+            background: transparent;
+            text-decoration: none !important;
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--gray);
+            color: white;
+            transform: translateY(-2px);
+            text-decoration: none !important;
+        }
+
+        .btn-outline-danger {
+            border-color: var(--danger);
+            color: var(--danger);
+            background: transparent;
+            text-decoration: none !important;
+        }
+
+        .btn-outline-danger:hover {
+            background: var(--danger);
+            color: white;
+            transform: translateY(-2px);
+            text-decoration: none !important;
+        }
+
+        /* Fix for delete button specifically */
+        button.action-btn.btn-outline-danger {
+            text-decoration: none !important;
+            outline: none;
+        }
+
+        /* Remove any default button styles that might cause flicker */
+        button {
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+
+        /* Ensure focus states don't cause visual issues */
+        .action-btn:focus,
+        .action-btn button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+        }
+
+        /* Section cards */
+        .section-card {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .section-card:hover {
+            background: #e5e7eb;
+            transform: translateX(5px);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .section-details {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .section-details span {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .badge {
+            padding: 0.35rem 0.65rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .badge-enrolled {
+            background: var(--success);
+            color: white;
+        }
+
+        .badge-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Modal styling */
+        .modal-content {
+            border-radius: var(--border-radius);
+            border: none;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            background: linear-gradient(to right, var(--primary-light), white);
+            border-bottom: 1px solid #e5e7eb;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            padding: 1.5rem;
+        }
+
+        .modal-title {
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #e5e7eb;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            padding: 1.25rem 1.5rem;
+        }
+
+        /* Alert styling */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1.25rem;
+        }
+
+        .alert-info {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .alert-warning {
+            background: var(--warning-light);
+            color: #92400e;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .course-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .course-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .section-actions {
+                width: 100%;
+                justify-content: flex-start;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="bi bi-journal-bookmark"></i> Manage Courses</h1>
+            <a href="{{ url_for('lecturer_dashboard') }}" class="btn back-btn">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="flashes">
+            {% for category, message in messages %}
+            <li class="{{ category }}"><i class="bi bi-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i> {{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        <div class="course-form">
+            <h3 class="mb-4"><i class="bi bi-plus-circle"></i> Add New Course</h3>
+            <form method="POST" action="{{ url_for('courses') }}">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="course_code" class="form-label"><i class="bi bi-code-slash"></i> Course Code*</label>
+                        <input type="text" class="form-control" name="course_code" id="course_code" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="course_name" class="form-label"><i class="bi bi-journal-text"></i> Course Name*</label>
+                        <input type="text" class="form-control" name="course_name" id="course_name" required>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <label for="course_description" class="form-label"><i class="bi bi-text-paragraph"></i> Description</label>
+                        <textarea class="form-control" name="course_description" id="course_description" rows="3"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Create Course
+                </button>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <h3 class="mb-4"><i class="bi bi-list-ul"></i> Your Courses</h3>
+            {% if not courses %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> You haven't created any courses yet.
+            </div>
+            {% else %}
+            {% for course in courses %}
+            <div class="course-card">
+                <div class="course-header">
+                    <div>
+                        <h4 class="course-title">{{ course.course_code }} - {{ course.course_name }}</h4>
+                        <span class="badge badge-primary">
+                            <i class="bi bi-collection"></i> {{ course.section_count }} section(s)
+                        </span>
+                    </div>
+                    <div class="course-actions">
+                        <!-- Manage Sections Button -->
+                        <a href="{{ url_for('manage_sections', course_id=course.id) }}"
+                            class="action-btn btn-outline-primary">
+                            <i class="bi bi-collection"></i> Manage Sections
+                            <span class="badge bg-secondary ms-1">
+                                {{ section_counts[course.id] if section_counts and course.id in section_counts else 0 }}
+                            </span>
+                        </a>
+
+                        <!-- Edit Course Button -->
+                        <a href="{{ url_for('edit_course', course_id=course.id) }}"
+                            class="action-btn btn-outline-secondary">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+
+                        <!-- Delete Course Button - FIXED -->
+                        <button type="button" class="action-btn btn-outline-danger" data-bs-toggle="modal"
+                            data-bs-target="#deleteCourseModal{{ course.id }}">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </div>
+
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal fade" id="deleteCourseModal{{ course.id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Confirm Deletion</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete <strong>{{ course.course_code }} - {{ course.course_name }}</strong>?</p>
+                                    <p class="text-danger"><i class="bi bi-warning"></i> This will also delete all associated sections and attendance records!</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Cancel</button>
+                                    <form action="{{ url_for('delete_course', course_id=course.id) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="bi bi-trash"></i> Confirm Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if course['sections'] %}
+                <h5 class="mb-3"><i class="bi bi-layers"></i> Class Sections:</h5>
+                {% for section in course['sections'] %}
+                <div class="section-card">
+                    <div class="section-header">
+                        <div>
+                            <h6 class="section-title">{{ section['section_name'] }}</h6>
+                            <div class="section-details">
+                                <span><i class="bi bi-clock"></i> {{ section['schedule'] }}</span>
+                                <span><i class="bi bi-geo-alt"></i> {{ section['location'] or 'Location not specified' }}</span>
+                                <span class="badge badge-enrolled">
+                                    <i class="bi bi-people"></i> {{ section['student_count'] }} enrolled
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="section-actions">
+                            <a href="{{ url_for('manage_attendance', section_id=section.id) }}"
+                                class="action-btn btn-outline-primary">
+                                <i class="bi bi-clipboard-check"></i> Attendance
+                            </a>
+                            <a href="{{ url_for('enroll_student') }}?section_id={{ section.id }}"
+                                class="action-btn btn-outline-primary">
+                                <i class="bi bi-person-plus"></i> Enroll Students
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> This course has no sections yet. Create one to start managing attendance.
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Prevent default behavior on delete buttons to fix modal glitter
+            document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            });
+
+            // Focus on first input field when page loads
+            document.querySelector('input')?.focus();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #6d28d9;
+            --primary-light: #ede9fe;
+            --success: #0d9488;
+            --success-dark: #0f766e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --danger-light: #ffe6ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --gray-light: #adb5bd;
+            --light-gray: #e9ecef;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --card-shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--primary-ultralight);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .dashboard-header h2 {
+            color: var(--dark);
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 8px rgba(124, 58, 237, 0.2);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(67, 97, 238, 0.25);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #0d9488, #0f766e);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(13, 148, 136, 0.25);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #e07c0e);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(248, 150, 30, 0.25);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(247, 37, 133, 0.25);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #6b7280;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+            transform: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .alert {
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            box-shadow: var(--card-shadow);
+            border-left: 4px solid transparent;
+        }
+
+        .alert-warning {
+            background-color: var(--warning-light);
+            border-left-color: var(--warning);
+        }
+
+        .alert-success {
+            background: linear-gradient(to right, #f0fdfa, white);
+            padding: 20px 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.1);
+            border-left: 4px solid #0d9488;
+        }
+
+        .alert-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .alert-warning .alert-icon {
+            color: var(--warning);
+        }
+
+        .alert-success .alert-icon {
+            color: #0d9488;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .alert-content {
+            flex-grow: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 1.1rem;
+            color: #0f766e;
+        }
+
+        .alert-message {
+            font-size: 0.95rem;
+            color: #374151;
+            opacity: 0.9;
+        }
+
+        .courses-section {
+            margin-top: 2.5rem;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            color: #1f2937;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.1);
+            margin-bottom: 24px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #f1f3f4;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(124, 58, 237, 0.15);
+        }
+
+        .course-card-header {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: white;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .course-code {
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: 0.5px;
+        }
+
+        .course-name {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        .course-card-body {
+            padding: 1.75rem;
+        }
+
+        .section-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px dashed #e5e7eb;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        .section-item:hover {
+            background-color: #faf5ff;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+
+        .section-item:last-child {
+            border-bottom: none;
+        }
+
+        .section-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .section-name {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+            color: #374151;
+        }
+
+        .section-schedule {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-left: 32px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-schedule i {
+            font-size: 0.8rem;
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: var(--border-radius);
+            z-index: 1001;
+            display: none;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--light-gray);
+            animation: modalSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-header {
+            padding: 1.5rem 1.75rem;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to right, var(--primary-light), white);
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .modal-body {
+            padding: 1.75rem;
+        }
+
+        .modal-footer {
+            padding: 1.25rem 1.75rem;
+            border-top: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+            transition: var(--transition);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-btn:hover {
+            background-color: var(--light-gray);
+            color: var(--danger);
+        }
+
+        .video-container {
+            width: 100%;
+            margin: 1.5rem 0;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            position: relative;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--light-gray);
+        }
+
+        #video-feed,
+        #scan-video-feed {
+            width: 100%;
+            display: block;
+            background-color: #f1f3f5;
+        }
+
+        .status-message {
+            padding: 1.25rem;
+            border-radius: var(--border-radius);
+            margin: 1.5rem 0;
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .status-success {
+            background-color: var(--success-light);
+            color: var(--success-dark);
+            border-left: 4px solid var(--success);
+            display: flex;
+        }
+
+        .status-error {
+            background-color: var(--danger-light);
+            color: var(--danger);
+            border-left: 4px solid var(--danger);
+            display: flex;
+        }
+
+        /* Face guide overlay */
+        .face-guide-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            pointer-events: none;
+        }
+
+        .face-guide {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 250px;
+            border: 3px dashed rgba(255, 255, 255, 0.7);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+
+            100% {
+                opacity: 0.7;
+            }
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            backdrop-filter: blur(2px);
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 4px solid rgba(67, 97, 238, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Enhanced Checkmark Animation */
+        .checkmark-animation {
+            width: 80px;
+            height: 80px;
+            margin: 1.5rem auto;
+            display: none;
+        }
+
+        .checkmark-circle {
+            stroke: var(--success);
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            fill: none;
+            animation: circle-animation 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .checkmark-check {
+            stroke: var(--success);
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            fill: none;
+            animation: checkmark-animation 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+
+        @keyframes circle-animation {
+            0% {
+                stroke-dasharray: 0, 166;
+                stroke-dashoffset: 0;
+            }
+
+            100% {
+                stroke-dasharray: 166, 166;
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes checkmark-animation {
+            0% {
+                stroke-dasharray: 0, 48;
+                stroke-dashoffset: 0;
+            }
+
+            100% {
+                stroke-dasharray: 48, 48;
+                stroke-dashoffset: 0;
+            }
+        }
+
+        /* Enhanced Preview Grid */
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 12px;
+            margin-top: 1.5rem;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            background: #f5f5f5;
+            transition: var(--transition);
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--light-gray);
+        }
+
+        .preview-item:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Progress Indicator */
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 8px;
+            background: var(--light-gray);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        .progress-counter {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--gray);
+            min-width: 50px;
+            text-align: right;
+        }
+
+        /* Pose Indicator */
+        .pose-indicator {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            backdrop-filter: blur(2px);
+        }
+
+        /* Instruction Box */
+        .instruction-box {
+            background-color: var(--primary-light);
+            padding: 1rem 1.25rem;
+            border-radius: var(--border-radius);
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .instruction-box i {
+            color: var(--primary);
+            font-size: 1.25rem;
+            margin-top: 2px;
+        }
+
+        .instruction-box p {
+            font-size: 0.95rem;
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        /* Auto-capture notice */
+        .auto-capture-notice {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(2px);
+        }
+
+        .auto-capture-notice i {
+            font-size: 1rem;
+        }
+
+        /* Confetti Effect */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1002;
+            display: none;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            opacity: 0.8;
+            animation: confetti-fall linear forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -48%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1.25rem;
+                margin: 1rem;
+            }
+
+            .dashboard-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 32px;
+                padding-bottom: 24px;
+                border-bottom: 1px solid #e5e7eb;
+            }
+
+            .dashboard-header h2 {
+                color: #1f2937;
+                font-size: 1.75rem;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .section-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .course-card-header {
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                color: white;
+                padding: 1.25rem 1.75rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .alert {
+                flex-direction: column;
+                text-align: left;
+                gap: 0.75rem;
+            }
+
+            .modal-content {
+                width: 95%;
+            }
+
+            .preview-grid {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+
+            .modal-footer .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Animation classes */
+        .pulse {
+            animation: pulse-animation 1.5s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .shake {
+            animation: shake-animation 0.5s;
+        }
+
+        @keyframes shake-animation {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-5px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        /* Empty state styling */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h2><i class="bi bi-person-video3"></i> Student Dashboard</h2>
+            <div class="user-info">
+                <div class="user-avatar">{{ student_initials }}</div>
+                <p class="text-muted">Welcome back, {{ session.get('username', 'Student') }}</p>
+                <a href="{{ url_for('logout') }}" class="btn btn-danger">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Face Registration Alert -->
+        {% if not face_registered %}
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle-fill alert-icon"></i>
+            <div class="alert-content">
+                <div class="alert-title">Complete Your Face Registration</div>
+                <p class="alert-message">
+                    You must register your face before marking attendance. This helps
+                    ensure secure and accurate attendance tracking.
+                </p>
+            </div>
+            <button id="register-face-btn" class="btn btn-warning">
+                <i class="bi bi-person-plus"></i> Register Now
+            </button>
+        </div>
+        {% else %}
+        <div class="alert alert-success">
+            <i class="bi bi-check-circle-fill alert-icon"></i>
+            <div class="alert-content">
+                <div class="alert-title">Face Registration Complete</div>
+                <p class="alert-message">You're ready to mark attendance using face recognition.</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="courses-section">
+            <h3 class="section-title">
+                <i class="bi bi-journal-bookmark"></i> Your Enrolled Courses
+            </h3>
+
+            {% if not courses %}
+            <div class="alert">
+                <i class="bi bi-info-circle-fill alert-icon"></i>
+                <div class="alert-content">
+                    <p class="alert-message">You are not currently enrolled in any courses.</p>
+                </div>
+            </div>
+            {% else %}
+            {% for course in courses %}
+            <div class="course-card">
+                <div class="course-card-header">
+                    <div>
+                        <div class="course-code">{{ course['course_code'] }}</div>
+                        <div class="course-name">{{ course['course_name'] }}</div>
+                    </div>
+                    <a href="#" class="btn btn-outline">
+                        <i class="bi bi-info-circle"></i> Details
+                    </a>
+                </div>
+                <div class="course-card-body">
+                    {% for section in course_sections[course['id']] %}
+                    <div class="section-item">
+                        <div class="section-info">
+                            <span class="section-name">
+                                <i class="bi bi-collection"></i> {{ section['section_name'] }}
+                            </span>
+                            <span class="section-schedule">
+                                {{ section['schedule'] }}
+                            </span>
+                        </div>
+                        <div class="section-actions">
+                            {% if section['has_marked'] %}
+                            <button class="btn btn-secondary" disabled>
+                                <i class="bi bi-check-circle"></i> Marked
+                            </button>
+                            {% else %}
+                            <button class="btn btn-success"
+                                onclick="startAttendanceVerification({{ section['id'] }}, '{{ course['course_code'] }} - {{ section['section_name'] }}')">
+                                <i class="bi bi-camera"></i> Mark Attendance
+                            </button>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Face Registration Modal -->
+    <div class="modal-overlay" id="face-registration-overlay"></div>
+    <div class="modal-content" id="face-registration-modal">
+        <div class="modal-header">
+            <h3 class="modal-title"><i class="bi bi-person-plus"></i> Face Registration</h3>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <span class="progress-counter" id="progress-counter">0/5</span>
+            </div>
+        </div>
+        <div class="modal-body">
+            <p>
+                Please follow these instructions for successful face registration:
+            </p>
+           
+
+            <div id="dynamic-instruction" class="instruction-box">
+                <i class="bi bi-lightbulb"></i>
+                <p>Position your face in the center and look straight ahead</p>
+            </div>
+
+            <div class="video-container">
+                <div class="face-guide-overlay">
+                    <div class="face-guide"></div>
+                    <div class="pose-indicator">Front View</div>
+                </div>
+                <img id="video-feed" src="{{ url_for('video_feed') }}" alt="Video Feed" />
+                <div class="auto-capture-notice">
+                    <i class="bi bi-camera"></i> Auto-capturing in <span id="capture-timer">3</span>s
+                </div>
+            </div>
+
+            <div id="registration-status" class="status-message"></div>
+
+            <div id="preview-container" class="preview-grid"></div>
+
+            <div class="checkmark-animation" id="registration-checkmark">
+                <svg viewBox="0 0 52 52">
+                    <circle class="checkmark-circle" cx="26" cy="26" r="25" />
+                    <path class="checkmark-check" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                </svg>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="cancel-btn" class="btn btn-danger">
+                <i class="bi bi-x-circle"></i> Cancel
+            </button>
+            <button id="capture-btn" class="btn btn-primary">
+                <i class="bi bi-camera"></i> Start Capture
+            </button>
+        </div>
+    </div>
+
+    <!-- Face Verification Modal -->
+    <div class="modal-overlay" id="face-scanning-overlay"></div>
+    <div class="modal-content" id="face-scanning-modal">
+        <div class="modal-header">
+            <h3 class="modal-title"><i class="bi bi-person-check"></i> Attendance Verification</h3>
+            <button class="close-btn" id="close-scanning-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p id="verification-instruction">
+                Please position your face in the center of the frame for verification:
+            </p>
+
+            <div class="video-container">
+                <div class="face-guide-overlay">
+                    <div class="face-guide"></div>
+                </div>
+                <div class="loading-spinner" id="loadingSpinner">
+                    <div class="spinner"></div>
+                </div>
+                <img id="scan-video-feed" src="{{ url_for('video_feed') }}" alt="Video Feed" />
+            </div>
+
+            <div id="attendance-status" class="status-message"></div>
+
+            <div class="checkmark-animation" id="verification-checkmark">
+                <svg viewBox="0 0 52 52">
+                    <circle class="checkmark-circle" cx="26" cy="26" r="25" />
+                    <path class="checkmark-check" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                </svg>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="cancel-scanning-btn" class="btn btn-danger">
+                <i class="bi bi-x-circle"></i> Cancel
+            </button>
+            <button id="capture-scanning-btn" class="btn btn-primary">
+                <i class="bi bi-camera-fill"></i> Verify Attendance
+            </button>
+        </div>
+    </div>
+
+    <!-- Confetti Container -->
+    <div class="confetti-container" id="confetti-container"></div>
+
+    <script>
+        // =============================================
+        // Global State Management
+        // =============================================
+
+        const registrationState = {
+            count: 0,
+            maxCaptures: 5,
+            poses: ['front', 'left', 'right', 'up', 'down'],
+            poseNames: {
+                front: "Front View",
+                left: "Turn Left",
+                right: "Turn Right",
+                up: "Look Up",
+                down: "Look Down"
+            },
+            currentPoseIndex: 0,
+            previews: [],
+            isCapturing: false,
+            interval: null,
+            countdownInterval: null
+        };
+
+        const verificationState = {
+            sectionId: null,
+            sectionName: '',
+            isProcessing: false
+        };
+
+        // Face registration status from server
+        const faceRegistered = {% if face_registered %}true{% else %} false{% endif %};
+
+        // DOM Elements
+        const registrationModal = document.getElementById('face-registration-modal');
+        const registrationOverlay = document.getElementById('face-registration-overlay');
+        const scanningModal = document.getElementById('face-scanning-modal');
+        const scanningOverlay = document.getElementById('face-scanning-overlay');
+        const confettiContainer = document.getElementById('confetti-container');
+
+        // =============================================
+        // Event Listeners
+        // =============================================
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Face Registration Modal
+            document.getElementById('register-face-btn')?.addEventListener('click', openFaceRegistrationModal);
+            document.getElementById('cancel-btn')?.addEventListener('click', closeRegistrationModal);
+            document.getElementById('face-registration-overlay')?.addEventListener('click', closeRegistrationModal);
+            document.getElementById('capture-btn')?.addEventListener('click', toggleCapture);
+
+            // Attendance Verification Modal
+            document.getElementById('close-scanning-modal')?.addEventListener('click', closeVerificationModal);
+            document.getElementById('cancel-scanning-btn')?.addEventListener('click', closeVerificationModal);
+            document.getElementById('face-scanning-overlay')?.addEventListener('click', closeVerificationModal);
+            document.getElementById('capture-scanning-btn')?.addEventListener('click', captureAndVerifyFace);
+        });
+
+        // =============================================
+        // Face Registration Functions
+        // =============================================
+
+        function openFaceRegistrationModal() {
+            // Reset state
+            registrationState.count = 0;
+            registrationState.currentPoseIndex = 0;
+            registrationState.previews = [];
+            registrationState.isCapturing = false;
+            clearInterval(registrationState.interval);
+            clearInterval(registrationState.countdownInterval);
+
+            // Initialize UI
+            updateProgressDisplay();
+            updatePoseIndicator();
+            document.getElementById('preview-container').innerHTML = '';
+            document.getElementById('registration-checkmark').style.display = 'none';
+            document.getElementById('registration-status').innerHTML = '';
+
+            // Show modal and guide
+            registrationOverlay.style.display = 'block';
+            registrationModal.style.display = 'block';
+            document.querySelector('#face-registration-modal .face-guide-overlay').style.display = 'block';
+            document.querySelector('#face-registration-modal .auto-capture-notice').style.display = 'none';
+        }
+
+        function closeRegistrationModal() {
+            clearInterval(registrationState.interval);
+            clearInterval(registrationState.countdownInterval);
+            registrationState.isCapturing = false;
+            registrationOverlay.style.display = 'none';
+            registrationModal.style.display = 'none';
+
+            // Reset button
+            const captureBtn = document.getElementById('capture-btn');
+            captureBtn.innerHTML = '<i class="bi bi-camera"></i> Start Capture';
+            captureBtn.classList.remove('btn-danger', 'btn-success');
+            captureBtn.classList.add('btn-primary');
+        }
+
+        function toggleCapture() {
+            if (registrationState.isCapturing) {
+                // Stop capturing
+                stopCapture();
+            } else {
+                // Start capturing
+                startCapture();
+            }
+        }
+
+        function startCapture() {
+            registrationState.isCapturing = true;
+            document.getElementById('capture-btn').innerHTML = '<i class="bi bi-stop-circle"></i> Stop Capture';
+            document.getElementById('capture-btn').classList.remove('btn-primary');
+            document.getElementById('capture-btn').classList.add('btn-danger');
+
+            // Show initial countdown
+            startCaptureCountdown();
+        }
+
+        function stopCapture() {
+            registrationState.isCapturing = false;
+            clearInterval(registrationState.interval);
+            clearInterval(registrationState.countdownInterval);
+
+            document.getElementById('capture-btn').innerHTML = '<i class="bi bi-camera"></i> Resume Capture';
+            document.getElementById('capture-btn').classList.remove('btn-danger');
+            document.getElementById('capture-btn').classList.add('btn-primary');
+
+            document.getElementById('registration-status').innerHTML = `
+                <div class="status-message">
+                    <i class="bi bi-pause-circle"></i>
+                    Capture paused (${registrationState.count}/${registrationState.maxCaptures} images)
+                </div>
+            `;
+
+            document.querySelector('.auto-capture-notice').style.display = 'none';
+        }
+
+        function startCaptureCountdown() {
+            let countdown = 3;
+            const timerElement = document.getElementById('capture-timer');
+            const noticeElement = document.querySelector('.auto-capture-notice');
+
+            noticeElement.style.display = 'flex';
+            timerElement.textContent = countdown;
+
+            clearInterval(registrationState.countdownInterval);
+
+            registrationState.countdownInterval = setInterval(() => {
+                countdown--;
+                timerElement.textContent = countdown;
+
+                if (countdown <= 0) {
+                    clearInterval(registrationState.countdownInterval);
+                    noticeElement.style.display = 'none';
+                    captureFace();
+                }
+            }, 1000);
+        }
+
+        function captureFace() {
+            if (registrationState.count >= registrationState.maxCaptures) {
+                return;
+            }
+
+            const video = document.getElementById('video-feed');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth || video.width;
+            canvas.height = video.videoHeight || video.height;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Show processing state
+            document.getElementById('registration-status').innerHTML = `
+                <div class="status-processing">
+                    <div class="spinner"></div>
+                    Capturing image ${registrationState.count + 1}/${registrationState.maxCaptures}...
+                </div>
+            `;
+
+            canvas.toBlob(blob => {
+                const formData = new FormData();
+                formData.append('image', blob, `pose_${registrationState.poses[registrationState.currentPoseIndex]}.jpg`);
+
+                fetch("{{ url_for('register_face') }}", {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(handleRegistrationResponse)
+                    .catch(handleRegistrationError);
+            }, 'image/jpeg', 0.9);
+        }
+
+
+        // Helper function to wait for video to be ready
+        function waitForVideoReady(video, timeout = 5000) {
+            return new Promise((resolve, reject) => {
+                if (video.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA) {
+                    return resolve();
+                }
+
+                const timer = setTimeout(() => {
+                    video.removeEventListener('canplay', onCanPlay);
+                    reject(new Error('Video feed not ready'));
+                }, timeout);
+
+                function onCanPlay() {
+                    clearTimeout(timer);
+                    video.removeEventListener('canplay', onCanPlay);
+                    resolve();
+                }
+
+                video.addEventListener('canplay', onCanPlay);
+            });
+        }
+
+        async function handleRegistrationResponse(response) {
+            try {
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server error: ${response.status} - ${errorText}`);
+                }
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Face capture failed');
+                }
+
+                // Update state
+                registrationState.count = data.images_captured || (registrationState.count + 1);
+                registrationState.previews.push({
+                    image: data.face_preview,
+                    pose: registrationState.poses[registrationState.currentPoseIndex],
+                    timestamp: new Date().toISOString()
+                });
+
+                // Update UI
+                updateProgressDisplay();
+                addPreviewImage(data.face_preview);
+                updateCaptureFeedback();
+
+                // Handle completion or move to next pose
+                if (data.registration_complete) {
+                    await handleRegistrationComplete();
+                } else {
+                    proceedToNextPose();
+                }
+
+            } catch (error) {
+                handleRegistrationError(error);
+            }
+        }
+
+        function addPreviewImage(imageData) {
+            const previewContainer = document.getElementById('preview-container') || createPreviewContainer();
+            const pose = registrationState.poses[registrationState.currentPoseIndex];
+
+            const previewItem = document.createElement('div');
+            previewItem.className = 'preview-item';
+            previewItem.innerHTML = `
+                <img src="data:image/jpeg;base64,${imageData}" 
+                     alt="${registrationState.poseNames[pose] || 'Face Capture'}"/>
+                <div class="preview-badge">${registrationState.count}</div>
+            `;
+
+            // Add animation
+            previewItem.style.opacity = '0';
+            previewContainer.appendChild(previewItem);
+            setTimeout(() => previewItem.style.opacity = '1', 50);
+        }
+
+        function createPreviewContainer() {
+            const container = document.createElement('div');
+            container.id = 'preview-container';
+            container.className = 'preview-grid';
+            document.querySelector('.modal-body').appendChild(container);
+            return container;
+        }
+
+        function updateProgressDisplay() {
+            const progressText = document.getElementById('progress-counter');
+            const progressBar = document.querySelector('.progress-fill');
+            const percentage = (registrationState.count / registrationState.maxCaptures) * 100;
+
+            progressText.textContent = `${registrationState.count}/${registrationState.maxCaptures}`;
+            progressBar.style.width = `${percentage}%`;
+
+            // Add pulse animation when progressing
+            progressBar.classList.add('pulse');
+            setTimeout(() => progressBar.classList.remove('pulse'), 500);
+        }
+
+        function updatePoseIndicator() {
+            const poseIndicator = document.querySelector('.pose-indicator');
+            const currentPose = registrationState.poses[registrationState.currentPoseIndex];
+            poseIndicator.textContent = registrationState.poseNames[currentPose] || currentPose;
+
+            // Update instruction
+            const instructions = {
+                front: "Look straight ahead at the camera",
+                left: "Slowly turn your head to the left",
+                right: "Slowly turn your head to the right",
+                up: "Gently tilt your head upwards",
+                down: "Gently tilt your head downwards"
+            };
+
+            document.getElementById('dynamic-instruction').innerHTML = `
+                <i class="bi bi-lightbulb"></i>
+                <p>${instructions[currentPose] || 'Position your face in the center'}</p>
+            `;
+        }
+
+        function updateCaptureFeedback() {
+            if (registrationState.count >= registrationState.maxCaptures) {
+                document.getElementById('registration-status').innerHTML = `
+                    <div class="status-success">
+                        <i class="bi bi-check-circle"></i>
+                        Successfully captured all required images!
+                    </div>
+                `;
+            } else {
+                document.getElementById('registration-status').innerHTML = `
+                    <div class="status-message">
+                        <i class="bi bi-check-circle"></i>
+                        Image ${registrationState.count}/${registrationState.maxCaptures} captured successfully
+                    </div>
+                `;
+            }
+        }
+
+        function proceedToNextPose() {
+            registrationState.currentPoseIndex++;
+
+            if (registrationState.currentPoseIndex >= registrationState.poses.length) {
+                registrationState.currentPoseIndex = 0;
+            }
+
+            updatePoseIndicator();
+
+            if (registrationState.isCapturing) {
+                startCaptureCountdown();
+            }
+        }
+
+        async function handleRegistrationComplete() {
+            try {
+                // Show success state
+                document.getElementById('registration-status').innerHTML = `
+                    <div class="status-success pulse">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <div>
+                            <strong>Registration Complete!</strong>
+                            <p>${registrationState.maxCaptures} images captured successfully</p>
+                        </div>
+                    </div>
+                `;
+
+                // Animate checkmark
+                await animateCheckmark('registration-checkmark');
+
+                // Show confetti effect
+                showConfetti();
+
+                // Close modal after delay
+                setTimeout(() => {
+                    closeRegistrationModal();
+                    window.location.reload();
+                }, 2500);
+
+            } catch (error) {
+                console.error('Completion error:', error);
+                closeRegistrationModal();
+            }
+        }
+
+        function handleRegistrationError(error) {
+            console.error('Registration error:', error);
+
+            // Stop any ongoing capture
+            stopCapture();
+
+            // Show error message
+            document.getElementById('registration-status').innerHTML = `
+                <div class="status-error shake">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div>
+                        <strong>Capture Failed</strong>
+                        <p>${error.message || 'Please try again'}</p>
+                    </div>
+                </div>
+            `;
+
+            // Update instruction
+            document.getElementById('dynamic-instruction').innerHTML = `
+                <i class="bi bi-exclamation-triangle"></i>
+                <p style="color: var(--danger)">Error occurred. Please ensure:</p>
+                <ul>
+                    <li>Good lighting conditions</li>
+                    <li>No obstructions (glasses/hats)</li>
+                    <li>Your full face is visible</li>
+                </ul>
+            `;
+        }
+
+        // =============================================
+        // Attendance Verification Functions
+        // =============================================
+
+        function startAttendanceVerification(sectionId, sectionName) {
+            if (!faceRegistered) {
+                showAlert('Please complete face registration before marking attendance', 'warning');
+                return;
+            }
+
+            verificationState.sectionId = sectionId;
+            verificationState.sectionName = sectionName;
+            verificationState.isProcessing = false;
+
+            // Open modal and initialize UI
+            scanningOverlay.style.display = 'block';
+            scanningModal.style.display = 'block';
+
+            // Update instruction
+            document.getElementById('verification-instruction').textContent =
+                `Please position your face in the center to mark attendance for: ${sectionName}`;
+
+            // Show face guide overlay
+            document.querySelector('#face-scanning-modal .face-guide-overlay').style.display = 'block';
+
+            // Reset status messages
+            document.getElementById('attendance-status').style.display = 'none';
+            document.getElementById('verification-checkmark').style.display = 'none';
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('capture-scanning-btn').disabled = false;
+        }
+
+        function closeVerificationModal() {
+            scanningOverlay.style.display = 'none';
+            scanningModal.style.display = 'none';
+            verificationState.sectionId = null;
+            verificationState.sectionName = '';
+            verificationState.isProcessing = false;
+
+            // Reset UI elements
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('capture-scanning-btn').disabled = false;
+            document.getElementById('attendance-status').style.display = 'none';
+            document.getElementById('verification-checkmark').style.display = 'none';
+        }
+
+        function captureAndVerifyFace() {
+            if (!verificationState.sectionId || verificationState.isProcessing) {
+                return;
+            }
+
+            verificationState.isProcessing = true;
+            const video = document.getElementById('scan-video-feed');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth || video.width;
+            canvas.height = video.videoHeight || video.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Show loading state
+            document.getElementById('loadingSpinner').style.display = 'flex';
+            document.getElementById('capture-scanning-btn').disabled = true;
+            document.getElementById('attendance-status').style.display = 'none';
+
+            // Send to server
+            canvas.toBlob(blob => {
+                const formData = new FormData();
+                formData.append('image', blob, 'face_verification.jpg');
+
+                fetch(`/scan_attendance/${verificationState.sectionId}`, {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(handleVerificationResponse)
+                    .catch(handleVerificationError);
+            }, 'image/jpeg', 0.9);
+        }
+
+        async function handleVerificationResponse(response) {
+            try {
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server error: ${response.status} - ${errorText}`);
+                }
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Verification failed');
+                }
+
+                // Show success
+                document.getElementById('attendance-status').innerHTML = `
+                    <div class="status-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <div>
+                            <strong>Attendance Verified!</strong>
+                            <p>${verificationState.sectionName}</p>
+                            <small>Similarity: ${data.similarity?.toFixed(2) || 'N/A'}</small>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('attendance-status').style.display = 'block';
+
+                // Animate checkmark
+                await animateCheckmark('verification-checkmark');
+
+                // Show confetti
+                showConfetti();
+
+                // Close after delay
+                setTimeout(() => {
+                    closeVerificationModal();
+                    window.location.reload();
+                }, 2000);
+
+            } catch (error) {
+                handleVerificationError(error);
+            } finally {
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
+        }
+
+        function handleVerificationError(error) {
+            console.error('Verification error:', error);
+
+            document.getElementById('attendance-status').innerHTML = `
+                <div class="status-error">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div>
+                        <strong>Verification Failed</strong>
+                        <p>${error.message || 'Please try again'}</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('attendance-status').style.display = 'block';
+
+            verificationState.isProcessing = false;
+            document.getElementById('capture-scanning-btn').disabled = false;
+        }
+
+        // =============================================
+        // Animation Utilities
+        // =============================================
+
+        async function animateCheckmark(elementId) {
+            return new Promise((resolve) => {
+                const checkmark = document.getElementById(elementId);
+                const circle = checkmark.querySelector('.checkmark-circle');
+                const path = checkmark.querySelector('.checkmark-check');
+
+                // Reset animations
+                circle.style.strokeDasharray = '0, 166';
+                path.style.strokeDasharray = '0, 48';
+
+                // Make visible
+                checkmark.style.display = 'block';
+
+                // Animate circle
+                circle.style.animation = 'circle-animation 0.6s ease-out forwards';
+
+                // Animate check after circle completes
+                setTimeout(() => {
+                    path.style.animation = 'checkmark-animation 0.4s ease-out forwards';
+                    setTimeout(resolve, 500);
+                }, 600);
+            });
+        }
+
+        function showConfetti() {
+            confettiContainer.innerHTML = '';
+            confettiContainer.style.display = 'block';
+
+            // Create confetti particles
+            const colors = ['#4361ee', '#4cc9f0', '#f72585', '#f8961e', '#7209b7', '#3a0ca3', '#4ad66d', '#ff9e00'];
+
+            for (let i = 0; i < 120; i++) {
+                createConfettiParticle(colors[i % colors.length]);
+            }
+        }
+
+        function createConfettiParticle(color) {
+            const particle = document.createElement('div');
+            particle.className = 'confetti';
+            particle.style.backgroundColor = color;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = '-10px';
+            particle.style.width = `${Math.random() * 8 + 6}px`;
+            particle.style.height = `${Math.random() * 8 + 6}px`;
+            particle.style.opacity = Math.random() * 0.8 + 0.2;
+            particle.style.animationDuration = `${Math.random() * 3 + 2}s`;
+
+            confettiContainer.appendChild(particle);
+
+            // Remove after animation
+            setTimeout(() => {
+                particle.remove();
+            }, 5000);
+        }
+
+        // =============================================
+        // Utility Functions
+        // =============================================
+
+        function showAlert(message, type = 'info') {
+            const alertBox = document.createElement('div');
+            alertBox.className = `alert alert-${type}`;
+            alertBox.style.position = 'fixed';
+            alertBox.style.top = '20px';
+            alertBox.style.right = '20px';
+            alertBox.style.maxWidth = '400px';
+            alertBox.style.zIndex = '1100';
+            alertBox.style.animation = 'fadeIn 0.3s ease-out';
+            alertBox.innerHTML = `
+                <i class="bi bi-${type === 'info' ? 'info-circle' : type === 'warning' ? 'exclamation-triangle' : 'check-circle'}-fill alert-icon"></i>
+                <div class="alert-content">
+                    <div class="alert-message">${message}</div>
+                </div>
+            `;
+
+            document.body.appendChild(alertBox);
+
+            setTimeout(() => {
+                alertBox.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => alertBox.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

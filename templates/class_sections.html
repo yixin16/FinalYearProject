@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Sections - {{ course.course_name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #6d28d9;
+            --primary-light: #ede9fe;
+            --success: #0d9488;
+            --success-dark: #0f766e;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --dark: #1f2937;
+            --gray: #6b7280;
+            --light-gray: #f3f4f6;
+            --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0fdfa 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 1.5rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+        }
+
+        .page-header h2 {
+            color: var(--dark);
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .course-info {
+            color: var(--gray);
+            font-size: 1.1rem;
+            margin: 0.5rem 0 0 0;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(124, 58, 237, 0.3);
+            color: white;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .form-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-control {
+            padding: 0.875rem 1rem;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            padding: 0.875rem 1.75rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(124, 58, 237, 0.3);
+        }
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #f1f3f4;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .section-id {
+            background: var(--light-gray);
+            color: var(--gray);
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .section-details {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats {
+            display: flex;
+            gap: 0.75rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .stat-students {
+            background: #e7f5ff;
+            color: #1864ab;
+        }
+
+        .stat-sessions {
+            background: #ebfbee;
+            color: #2b8a3e;
+        }
+
+        .section-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: auto;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary-sm {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary-sm:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .btn-outline-secondary {
+            border: 1px solid var(--gray);
+            color: var(--gray);
+            background: transparent;
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--gray);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-danger {
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            background: transparent;
+        }
+
+        .btn-outline-danger:hover {
+            background: var(--danger);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Modal styling */
+        .modal-content {
+            border-radius: var(--border-radius);
+            border: none;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            background: linear-gradient(to right, var(--primary-light), white);
+            border-bottom: 1px solid #e5e7eb;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            padding: 1.5rem;
+        }
+
+        .modal-title {
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #e5e7eb;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            padding: 1.25rem 1.5rem;
+        }
+
+        /* Alert styling */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1.25rem;
+        }
+
+        .alert-info {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-count {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .section-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-actions {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-4">
+        <div class="page-header">
+            <div>
+                <h2 class="mb-2">{{ course.course_name }} ({{ course.course_code }})</h2>
+                <p class="course-info"><i class="bi bi-person"></i> Lecturer: {{ course.lecturer_name }}</p>
+            </div>
+            <a href="{{ url_for('lecturer_dashboard') }}" class="btn back-btn">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <div class="form-section">
+            <h3 class="mb-4"><i class="bi bi-plus-circle"></i> Create New Section</h3>
+            <form method="POST">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="section_name" class="form-label"><i class="bi bi-tag"></i> Section Name*</label>
+                        <input type="text" class="form-control" id="section_name" name="section_name" required>
+                        <div class="form-text">e.g., "Section A" or "Morning Class"</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="schedule" class="form-label"><i class="bi bi-calendar-week"></i> Schedule*</label>
+                        <input type="date" class="form-control" id="schedule" name="schedule" required
+                            placeholder="Mon/Wed 10:00-11:30">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="location" class="form-label"><i class="bi bi-geo-alt"></i> Location</label>
+                        <input type="text" class="form-control" id="location" name="location"
+                            placeholder="Building/Room number">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">
+                    <i class="bi bi-check-circle"></i> Create Section
+                </button>
+            </form>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3><i class="bi bi-collection"></i> Existing Sections</h3>
+            <span class="section-count">{{ sections|length }} section(s)</span>
+        </div>
+
+        {% if sections %}
+        <div class="section-grid">
+            {% for section in sections %}
+            <div class="section-card">
+                <div class="section-header">
+                    <h4 class="section-title">{{ section.section_name }}</h4>
+                    <span class="section-id">ID: {{ section.id }}</span>
+                </div>
+                
+                <div class="section-details">
+                    <div class="detail-item">
+                        <i class="bi bi-calendar-week"></i>
+                        <span>{{ section.schedule }}</span>
+                    </div>
+                    {% if section.location %}
+                    <div class="detail-item">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>{{ section.location }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="stats">
+                    <span class="stat-item stat-students">
+                        <i class="bi bi-people"></i>
+                        {{ section.student_count }} student(s)
+                    </span>
+                    <span class="stat-item stat-sessions">
+                        <i class="bi bi-clock-history"></i>
+                        {{ section.session_count }} session(s)
+                    </span>
+                </div>
+
+                <div class="section-actions">
+                    <a href="{{ url_for('manage_attendance', section_id=section.id) }}"
+                        class="action-btn btn-primary-sm">
+                        <i class="bi bi-clipboard-check"></i> Attendance
+                    </a>
+                    <a href="{{ url_for('edit_section', section_id=section.id) }}"
+                        class="action-btn btn-outline-secondary">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                    <button class="action-btn btn-outline-danger" data-bs-toggle="modal"
+                        data-bs-target="#deleteModal{{ section.id }}">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div class="modal fade" id="deleteModal{{ section.id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Confirm Deletion</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to delete section <strong>{{ section.section_name }}</strong>?</p>
+                            <p class="text-danger"><i class="bi bi-warning"></i> This will also delete all attendance records for this section.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <a href="{{ url_for('delete_section', section_id=section.id) }}" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Confirm Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> No sections have been created for this course yet.
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

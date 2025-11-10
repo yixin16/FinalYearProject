@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Section - {{ section.course_code }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #6d28d9;
+            --primary-light: #ede9fe;
+            --success: #0d9488;
+            --success-dark: #0f766e;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --dark: #1f2937;
+            --gray: #6b7280;
+            --light-gray: #f3f4f6;
+            --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            --border-radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0fdfa 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .container {
+            max-width: 800px;
+        }
+
+        /* Header Styles */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            padding: 1.5rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--gray);
+        }
+
+        .page-title {
+            color: var(--dark);
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .page-subtitle {
+            color: var(--gray);
+            margin: 0.25rem 0 0 0;
+        }
+
+        /* Form Styles */
+        .form-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            border: 1px solid #f1f3f4;
+        }
+
+        .form-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .form-header h3 {
+            color: var(--dark);
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-control {
+            padding: 0.875rem 1rem;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+        }
+
+        .form-text {
+            color: var(--gray);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            padding: 0.875rem 1.75rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-outline-secondary {
+            border: 1px solid var(--gray);
+            color: var(--gray);
+            background: transparent;
+            padding: 0.875rem 1.75rem;
+            border-radius: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--gray);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Flash Messages */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-success {
+            background: var(--success-light);
+            color: var(--success-dark);
+            border-left: 4px solid var(--success);
+        }
+
+        .alert-danger {
+            background: var(--danger-light);
+            color: var(--danger);
+            border-left: 4px solid var(--danger);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <!-- Header Section -->
+        <div class="page-header">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('lecturer_dashboard') }}"><i class="bi bi-house-door"></i> Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('view_section', section_id=section.id) }}">{{ section.course_code }}</a></li>
+                        <li class="breadcrumb-item active">Edit Section</li>
+                    </ol>
+                </nav>
+                <h1 class="page-title">Edit Section</h1>
+                <p class="page-subtitle">{{ section.course_code }} - {{ section.course_name }}</p>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <i class="bi bi-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %}-fill"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Edit Form -->
+        <div class="form-container">
+            <div class="form-header">
+                <h3><i class="bi bi-pencil-square"></i> Edit Section Details</h3>
+                <p class="text-muted mb-0">Update the information for {{ section.section_name }}</p>
+            </div>
+
+            <form method="POST">
+                <!-- Section Name Field -->
+                <div class="mb-4">
+                    <label for="section_name" class="form-label">
+                        <i class="bi bi-tag"></i> Section Name
+                    </label>
+                    <input type="text" class="form-control" id="section_name" name="section_name" 
+                           value="{{ section.section_name }}" required placeholder="e.g., Section A or Morning Class">
+                    <div class="form-text">A descriptive name for this class section</div>
+                </div>
+
+                <!-- Schedule Field -->
+                <div class="mb-4">
+                    <label for="schedule" class="form-label">
+                        <i class="bi bi-calendar-week"></i> Schedule
+                    </label>
+                    <input type="text" class="form-control" id="schedule" name="schedule" 
+                           value="{{ section.schedule }}" required placeholder="e.g., Mon/Wed 10:00-11:30">
+                    <div class="form-text">Class meeting days and times</div>
+                </div>
+
+                <!-- Location Field -->
+                <div class="mb-4">
+                    <label for="location" class="form-label">
+                        <i class="bi bi-geo-alt"></i> Location
+                    </label>
+                    <input type="text" class="form-control" id="location" name="location" 
+                           value="{{ section.location or '' }}" placeholder="e.g., Building A, Room 101">
+                    <div class="form-text">Physical location or online meeting link</div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2 flex-wrap button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Update Section
+                    </button>
+                    <a href="{{ url_for('view_section', section_id=section.id) }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Info Card -->
+        <div class="form-container">
+            <div class="form-header">
+                <h3><i class="bi bi-info-circle"></i> Section Information</h3>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <strong>Course Code:</strong>
+                        <p class="text-muted">{{ section.course_code }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Course Name:</strong>
+                        <p class="text-muted">{{ section.course_name }}</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <strong>Section ID:</strong>
+                        <p class="text-muted">{{ section.id }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Created On:</strong>
+                        <p class="text-muted">
+                            {% if section.created_at %}
+                                {{ section.created_at.strftime('%B %d, %Y') }}
+                            {% else %}
+                                Date not available
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Focus on first input field when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('section_name').focus();
+        });
+
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const sectionName = document.getElementById('section_name').value.trim();
+            const schedule = document.getElementById('schedule').value.trim();
+            
+            if (!sectionName || !schedule) {
+                e.preventDefault();
+                alert('Please fill in all required fields.');
+            }
+        });
+    </script>
+</body>
+</html>

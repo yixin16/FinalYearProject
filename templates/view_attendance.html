@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Attendance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Your Attendance Records</h1>
+    <a href="{{ url_for('student_dashboard') }}">Back to Dashboard</a>
+
+    {% if records %}
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record['timestamp'] }}</td>
+                <td>{{ record['status'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No attendance records found.</p>
+    {% endif %}
+
+</body>
+</html>

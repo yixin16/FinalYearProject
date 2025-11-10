@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enroll Student - Attendance System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #7c3aed;
+      --primary-dark: #6d28d9;
+      --primary-light: #ede9fe;
+      --success: #0d9488;
+      --success-dark: #0f766e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --dark: #1f2937;
+      --gray: #6b7280;
+      --light-gray: #f3f4f6;
+      --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      --border-radius: 16px;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f5f7ff 0%, #f0fdfa 100%);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 20px 0;
+    }
+
+    .enrollment-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .card {
+      border: none;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.4rem;
+      text-align: center;
+      padding: 1.5rem;
+      border-bottom: none;
+    }
+
+    .card-body {
+      padding: 2rem;
+    }
+
+    .back-btn {
+      background: white;
+      color: var(--primary);
+      border: 1px solid var(--primary-light);
+      border-radius: 10px;
+      padding: 0.6rem 1.2rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
+      margin-bottom: 1.5rem;
+    }
+
+    .back-btn:hover {
+      background: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+    }
+
+    /* Flash messages */
+    .flashes {
+      padding: 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .flashes li {
+      list-style: none;
+      margin-bottom: 0.75rem;
+      padding: 1rem 1.25rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      font-weight: 500;
+    }
+
+    .flashes .success {
+      background: linear-gradient(to right, #ecfdf5, white);
+      color: #065f46;
+      border-left: 4px solid #10b981;
+    }
+
+    .flashes .danger {
+      background: linear-gradient(to right, #fef2f2, white);
+      color: #991b1b;
+      border-left: 4px solid #ef4444;
+    }
+
+    .flashes .warning {
+      background: linear-gradient(to right, #fffbeb, white);
+      color: #92400e;
+      border-left: 4px solid #f59e0b;
+    }
+
+    /* Form styling */
+    .form-label {
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 0.75rem;
+      font-size: 1.05rem;
+    }
+
+    .form-select {
+      padding: 0.875rem 1rem;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background-color: #fafafa;
+    }
+
+    .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+      background-color: white;
+    }
+
+    .form-section {
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .form-section::after {
+      content: '';
+      position: absolute;
+      bottom: -1rem;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #e5e7eb, transparent);
+    }
+
+    .form-section:last-child::after {
+      display: none;
+    }
+
+    .select-icon {
+      position: relative;
+    }
+
+    .select-icon::before {
+      content: '\F62E';
+      font-family: 'bootstrap-icons';
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Button styling */
+    .submit-btn {
+      background: linear-gradient(135deg, var(--success), var(--success-dark));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 1rem 2rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      width: 100%;
+      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);
+      margin-top: 1rem;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(13, 148, 136, 0.3);
+    }
+
+    /* Decorative elements */
+    .decorative-circle {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(13, 148, 136, 0.1) 100%);
+      z-index: -1;
+    }
+
+    .circle-1 {
+      top: -50px;
+      right: -50px;
+    }
+
+    .circle-2 {
+      bottom: -80px;
+      left: -80px;
+      width: 250px;
+      height: 250px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .card-header {
+        font-size: 1.2rem;
+        padding: 1.25rem;
+      }
+      
+      .card-body {
+        padding: 1.5rem;
+      }
+      
+      .decorative-circle {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container enrollment-container">
+    <div class="card position-relative">
+      <div class="decorative-circle circle-1"></div>
+      <div class="decorative-circle circle-2"></div>
+      
+      <div class="card-header">
+        <i class="bi bi-person-plus me-2"></i> Enroll Student
+      </div>
+      <div class="card-body">
+        <a href="{{ url_for('lecturer_dashboard') }}" class="btn back-btn">
+          <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
+        </a>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="flashes">
+          {% for category, message in messages %}
+          <li class="{{ category }}"><i class="bi bi-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-circle{% else %}info-circle{% endif %}"></i> {{ message }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Enrollment form -->
+        <form method="POST">
+          <div class="form-section">
+            <label for="student_id" class="form-label">
+              <i class="bi bi-person me-2"></i> Select Student
+            </label>
+            <div class="select-icon">
+              <select class="form-select" name="student_id" id="student_id" required>
+                <option value="">-- Choose a student --</option>
+                {% for student in students %}
+                <option value="{{ student.user_id }}">
+                  {{ student.name }} (Student ID: {{ student.student_id }})
+                </option>
+                {% else %}
+                <option disabled>No students available</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <label for="course_id" class="form-label">
+              <i class="bi bi-journal me-2"></i> Select Course
+            </label>
+            <div class="select-icon">
+              <select class="form-select" name="course_id" id="course_id" required>
+                <option value="">-- Choose a course --</option>
+                {% for course in courses %}
+                <option value="{{ course.id }}">
+                  {{ course.course_code }} - {{ course.course_name }} ({{ course.section_count }} sections)
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn submit-btn">
+            <i class="bi bi-save me-2"></i> Enroll Student
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
